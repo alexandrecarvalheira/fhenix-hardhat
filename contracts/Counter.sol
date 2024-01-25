@@ -2,17 +2,17 @@
 
 pragma solidity >=0.8.13 <0.9.0;
 
-import "fhevm/lib/TFHE.sol";
+import "@fhenixprotocol/contracts/FHE.sol";
+ import "@fhenixprotocol/contracts/access/Permissioned.sol";
+// import "fhevm/lib/TFHE.sol";
 
-contract Counter {
-    euint32 private counter;
 
-    function add(bytes calldata encryptedValue) public {
-        euint32 value = TFHE.asEuint32(encryptedValue);
-        counter = TFHE.add(counter, value);
+contract Counter is Permissioned{
+    euint32 public counter = FHE.asEuint32(100);
+
+    function getCounter(Permission calldata permission ) public onlySender(permission) view
+      returns (bytes memory) {
+            return FHE.sealoutput(counter, permission.publicKey);
     }
 
-    function getCounter(bytes32 publicKey) public view returns (bytes memory) {
-        return TFHE.reencrypt(counter, publicKey);
-    }
 }
