@@ -1,4 +1,3 @@
-import { ethers } from "hardhat";
 import hre from "hardhat";
 
 import { waitForBlock } from "../../utils/block";
@@ -13,20 +12,16 @@ describe("Unit tests", function () {
 
     // get tokens from faucet if we're on localfhenix and don't have a balance
     await getTokensFromFaucet();
-
     // deploy test contract
     const { counter, address } = await deployCounterFixture();
     this.counter = counter;
 
-    // initiate fhevmjs
+    // initiate fhenixjs
     this.instance = await createFheInstance(hre, address);
 
     // set admin account/signer
-    const signers = await ethers.getSigners();
+    const signers = await hre.ethers.getSigners();
     this.signers.admin = signers[0];
-
-    // wait for deployment block to finish
-    await waitForBlock(hre);
   });
 
   describe("Counter", function () {

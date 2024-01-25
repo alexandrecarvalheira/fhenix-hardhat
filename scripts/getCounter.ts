@@ -1,4 +1,3 @@
-import { JsonRpcProvider } from "ethers";
 import { FhenixClient, Permit, getPermit } from "fhenixjs";
 
 const hre = require("hardhat");
@@ -12,13 +11,9 @@ async function getCounter() {
   const provider = hre.ethers.provider;
   const instance = new FhenixClient({ provider });
 
-  const oldpermit = await instance.exportPermits();
-  console.log(oldpermit);
-
   const permit = await getPermit(contractAddress, provider);
   instance.storePermit(permit);
   const permission = instance.extractPermitPermission(permit);
-  console.log(oldpermit);
 
   const Counter = await hre.ethers.getContractAt("Counter", contractAddress);
 
@@ -27,12 +22,4 @@ async function getCounter() {
   console.log({ plaintext });
 }
 
-if (require.main === module) {
-  // === This is for deploying a new diamond ===
-  getCounter()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      console.error(error);
-      process.exit(1);
-    });
-}
+getCounter();

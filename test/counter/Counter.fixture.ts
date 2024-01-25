@@ -1,17 +1,15 @@
 import axios from "axios";
-import { ethers } from "hardhat";
 import hre from "hardhat";
 
-import type { Counter } from "../../types/Counter";
+import type { Counter } from "../../types";
 import { waitForBlock } from "../../utils/block";
 
 export async function deployCounterFixture(): Promise<{ counter: Counter; address: string }> {
-  const signers = await ethers.getSigners();
-  const admin = signers[0];
+  const accounts = await hre.ethers.getSigners();
+  const contractOwner = accounts[0];
 
-  const counterFactory = await ethers.getContractFactory("Counter");
-  const counter = await counterFactory.connect(admin).deploy();
-  // await greeter.waitForDeployment();
+  const counterFactory = await hre.ethers.getContractFactory("Counter");
+  const counter = await counterFactory.connect(contractOwner).deploy();
   const address = await counter.getAddress();
   return { counter, address };
 }

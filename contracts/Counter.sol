@@ -8,9 +8,14 @@ import "@fhenixprotocol/contracts/FHE.sol";
 
 
 contract Counter is Permissioned{
-    euint32 public counter = FHE.asEuint32(100);
+     euint32 private counter;
 
-    function getCounter(Permission calldata permission ) public onlySender(permission) view
+    function add(inEuint32 calldata encryptedValue) public {
+      euint32 value = FHE.asEuint32(encryptedValue);
+      counter = FHE.add(value, counter);
+    }
+
+    function getCounter(Permission calldata permission) public onlySender(permission) view
       returns (bytes memory) {
             return FHE.sealoutput(counter, permission.publicKey);
     }

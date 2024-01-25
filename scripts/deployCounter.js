@@ -11,12 +11,9 @@ async function deploy() {
   console.log(`Counter deployed to: ${await counter.getAddress()}`);
 }
 
-if (require.main === module) {
-  // === This is for deploying a new diamond ===
-  deploy()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      console.error(error);
-      process.exit(1);
-    });
-}
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
