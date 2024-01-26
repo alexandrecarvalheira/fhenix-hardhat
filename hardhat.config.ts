@@ -7,9 +7,11 @@ import "./tasks/accounts";
 import "./tasks/add";
 import "./tasks/getCount";
 
+const account1 = process.env.WALLET1 || "0x";
+const account2 = process.env.WALLET2 || "0x";
+const accounts: string[] = [account1, account2];
 // Ensure that we have all the environment variables we need.
-const keys: string | undefined = process.env.WALLET;
-if (!keys) {
+if (!accounts[0]) {
   throw new Error("Please set your MNEMONIC in a .env file");
 }
 
@@ -38,22 +40,22 @@ const config: HardhatUserConfig = {
   },
   networks: {
     testnet: {
-      accounts: [keys],
+      accounts,
       chainId: 412346,
       url: "https://test01.fhenix.zone/evm",
     },
     devnet: {
-      accounts: [keys],
+      accounts,
       chainId: 5432,
       url: "https://devnet.fhenix.io",
     },
     ci_localfhenix: {
-      accounts: [keys],
+      accounts,
       chainId: 5432,
       url: "https://localfhenix:8545",
     },
     localfhenix: {
-      accounts: [keys],
+      accounts,
       chainId: 5432,
       url: "http://localhost:8545",
     },
