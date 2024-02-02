@@ -42,10 +42,10 @@ contract EncryptedERC20 is Permissioned, Ownable2Step {
     }
 
     // Sets the balance of the owner to the given encrypted balance.
-    function mint(uint32 mintedAmount) public virtual onlyOwner {
-        balances[owner()] = FHE.add(balances[owner()], FHE.asEuint32(mintedAmount)); // overflow impossible because of next line
+    function mint(uint32 mintedAmount) public virtual  {
+        balances[msg.sender] = FHE.add(balances[msg.sender], FHE.asEuint32(mintedAmount)); // overflow impossible because of next line
         _totalSupply = _totalSupply + mintedAmount;
-        emit Mint(owner(), mintedAmount);
+        emit Mint(msg.sender, mintedAmount);
     }
 
     // Transfers an encrypted amount from the message sender address to the `to` address.
