@@ -12,42 +12,41 @@ contract CPAMM is Permissioned {
     IERC20 public immutable token0;
     IERC20 public immutable token1;
 
-    uint public reserve0;
-    uint public reserve1;
+    euint32 public reserve0;
+    euint32 public reserve1;
 
-    uint public totalSupply;
-    mapping(address => uint) public balanceOf;
+    uint32 public totalSupply;
+    mapping(address => euint32) public balanceOf;
 
     constructor(address _token0, address _token1) {
         token0 = IERC20(_token0);
         token1 = IERC20(_token1);
     }
 
-    function _mint(address _to, uint _amount) private {
-        balanceOf[_to] += _amount;
+    function _mint(address _to, uint32 _amount) private {
+        balanceOf[_to] = FHE.add(balanceOf[_to], FHE.asEuint32(_amount));
         totalSupply += _amount;
     }
 
-    function _burn(address _from, uint _amount) private {
-        balanceOf[_from] -= _amount;
+    function _burn(address _from, uint32 _amount) private {
+        balanceOf[_from] = FHE.sub(balanceOf[_from], FHE.asEuint32(_amount));
         totalSupply -= _amount;
     }
 
-    function _update(uint _reserve0, uint _reserve1) private {
+    function _update(euint32 _reserve0, euint32 _reserve1) private {
         reserve0 = _reserve0;
         reserve1 = _reserve1;
     }
 
-    function swap(address _tokenIn, inEuint32 calldata _amountIn) external returns (uint amountOut) {
-        uint32 _amountIn = FHE.decrypt(FHE.asEuint32(_amountIn));
+    function swap(address _tokenIn, inEuint32 calldata _amountIn) external returns (euint32 amountOut) {
         require(
             _tokenIn == address(token0) || _tokenIn == address(token1),
             "invalid token"
         );
-        require(_amountIn > 0, "amount in = 0");
+        FHE.req(FHE.gt(FHE.asEuint32(_amountIn), FHE.asEuint32(0)));
 
         bool isToken0 = _tokenIn == address(token0);
-        (IERC20 tokenIn, IERC20 tokenOut, uint reserveIn, uint reserveOut) = isToken0
+        (IERC20 tokenIn, IERC20 tokenOut, euint32 reserveIn, euint32 reserveOut) = isToken0
             ? (token0, token1, reserve0, reserve1)
             : (token1, token0, reserve1, reserve0);
 
@@ -65,18 +64,17 @@ contract CPAMM is Permissioned {
         ydx / (x + dx) = dy
         */
         // 0.3% fee
-        uint amountInWithFee = (_amountIn * 997) / 1000;
-        amountOut = (reserveOut * amountInWithFee) / (reserveIn + amountInWithFee);
+        euint32 amountInWithFee = FHE.div(FHE.mul(FHE.asEuint32(_amountIn),FHE.asEuint32(997)),FHE.asEuint32(1000));
+        amountOut = FHE.div(FHE.mul(reserveOut,amountInWithFee),FHE.add(reserveIn,amountInWithFee));
 
         tokenOut.transfer(msg.sender, amountOut);
 
-        _update(token0.balanceOf(address(this)), token1.balanceOf(address(this)));
+        _update(token0.balanceOf(), token1.balanceOf());
     }
 
     function addLiquidity(inEuint32 calldata _amount0,inEuint32 calldata _amount1) external returns (uint shares) {
-        uint32 _amount0 = FHE.decrypt(FHE.asEuint32(_amount0));
-        uint32 _amount1 = FHE.decrypt(FHE.asEuint32(_amount1));
-        
+        euint32 amount0 = FHE.asEuint32(_amount0);
+        euint32 amount1 = FHE.asEuint32(_amount1);
         token0.transferFrom(msg.sender, address(this), _amount0);
         token1.transferFrom(msg.sender, address(this), _amount1);
 
@@ -95,9 +93,9 @@ contract CPAMM is Permissioned {
         x / y = dx / dy
         dy = y / x * dx
         */
-        if (reserve0 > 0 || reserve1 > 0) {
-            require(reserve0 * _amount1 == reserve1 * _amount0, "x / y != dx / dy");
-        }
+        ebool isNotZero = FHE.or(reserve0.gt(FHE.asEuint32(0)), reserve1.gt(FHE.asEuint32(0)));
+        ebool req = FHE.select(isNotZero, FHE.eq(FHE.mul(reserve0, amount1),FHE.mul(reserve1, amount0)), FHE.asEbool(false));
+        FHE.req(req);
 
         /*
         How much shares to mint?
@@ -150,11 +148,11 @@ contract CPAMM is Permissioned {
         (L1 - L0) / L0 = dx / x = dy / y
         */
         if (totalSupply == 0) {
-            shares = _sqrt(_amount0 * _amount1);
+            shares = _sqrt(FHE.mul(amount0, amount1));
         } else {
             shares = _min(
-                (_amount0 * totalSupply) / reserve0,
-                (_amount1 * totalSupply) / reserve1
+                (amount0 * totalSupply) / reserve0,
+                (amount1 * totalSupply) / reserve1
             );
         }
         require(shares > 0, "shares = 0");
@@ -217,7 +215,7 @@ contract CPAMM is Permissioned {
         token1.transfer(msg.sender, amount1);
     }
 
-    function _sqrt(uint y) private pure returns (uint z) {
+    function _sqrt(euint32 y) private pure returns (euint32 z) {
         if (y > 3) {
             z = y;
             uint x = y / 2 + 1;
@@ -236,22 +234,18 @@ contract CPAMM is Permissioned {
 }
 
 interface IERC20 {
-    function totalSupply() external view returns (uint);
+    function totalSupply() external view returns (uint32);
 
-    function balanceOf(address account) external view returns (uint);
+    function balanceOf() external view returns (euint32);
 
-    function transfer(address recipient, uint amount) external returns (bool);
+    function transfer(address to, euint32 amount) external returns (bool);
 
-    function allowance(address owner, address spender) external view returns (uint);
+    function allowance(address owner, address spender) external view returns (uint32);
 
-    function approve(address spender, uint amount) external returns (bool);
+    function approve(address spender, inEuint32 calldata encryptedAmount) external returns (bool);
 
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint amount
-    ) external returns (bool);
+    function transferFrom(address from, address to, inEuint32 calldata encryptedAmount) external returns (bool);
 
-    event Transfer(address indexed from, address indexed to, uint amount);
-    event Approval(address indexed owner, address indexed spender, uint amount);
+    event Transfer(address indexed from, address indexed to, uint32 amount);
+    event Approval(address indexed owner, address indexed spender, uint32 amount);
 }

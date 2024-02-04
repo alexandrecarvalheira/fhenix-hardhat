@@ -18,9 +18,9 @@ export async function getTokensFromFaucet() {
   if (hre.network.name === "localfhenix") {
     const signers = await hre.ethers.getSigners();
 
-    if ((await hre.ethers.provider.getBalance(signers[2].address)).toString() === "0") {
+    if ((await hre.ethers.provider.getBalance(signers[0].address)).toString() === "0") {
       console.log("Balance for signer is 0 - getting tokens from faucet");
-      const response = await axios.get(`http://localhost:42000/faucet?address=${signers[2].address}`);
+      const response = await axios.get(`http://localhost:42000/faucet?address=${signers[0].address}`);
       const data = await response.data;
       console.log(`Success!: ${JSON.stringify(data)}`);
       // await waitForBlock(hre);

@@ -24,6 +24,7 @@ contract EncryptedERC20 is Permissioned, Ownable2Step {
     constructor(string memory name_, string memory symbol_) Ownable(msg.sender) {
         _name = name_;
         _symbol = symbol_;
+        mint(1000000);
     }
 
     // Returns the name of the token.
@@ -64,11 +65,15 @@ contract EncryptedERC20 is Permissioned, Ownable2Step {
 
     // Returns the balance of the caller encrypted under the provided public key.
     function balanceOf(
-        address wallet,
         Permission calldata permission
     ) public view virtual onlySender(permission) returns (bytes memory) {
-            return FHE.sealoutput(balances[wallet], permission.publicKey);
+            return FHE.sealoutput(balances[msg.sender], permission.publicKey);
     }
+
+    function balanceOf() public view virtual returns (euint32) {
+            return balances[msg.sender];
+        }
+    
 
     // Sets the `encryptedAmount` as the allowance of `spender` over the caller's tokens.
     function approve(address spender, inEuint32 calldata encryptedAmount) public virtual returns (bool) {
