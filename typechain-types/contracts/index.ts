@@ -4,7 +4,13 @@
 
 /* eslint-disable */
 import type * as cpammSol from "./CPAMM.sol";
+import type * as erc20Sol from "./ERC20.sol";
+import type * as testFheSol from "./TestFHE.sol";
 
 export type { cpammSol };
+
+export type { erc20Sol };
+
+export type { testFheSol };
 export type { Counter } from "./Counter";
 export type { EncryptedERC20 } from "./EncryptedERC20";

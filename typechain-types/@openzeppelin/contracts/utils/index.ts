@@ -9,5 +9,6 @@ import type * as math from "./math";
 export type { cryptography };
 
 export type { math };
+export type { Nonces } from "./Nonces";
 export type { ShortStrings } from "./ShortStrings";
 export type { Strings } from "./Strings";

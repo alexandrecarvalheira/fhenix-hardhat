@@ -27,9 +27,9 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint256",
+        internalType: "uint32",
         name: "amount",
-        type: "uint256",
+        type: "uint32",
       },
     ],
     name: "Approval",
@@ -52,9 +52,9 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint256",
+        internalType: "uint32",
         name: "amount",
-        type: "uint256",
+        type: "uint32",
       },
     ],
     name: "Transfer",
@@ -76,9 +76,9 @@ const _abi = [
     name: "allowance",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "uint32",
         name: "",
-        type: "uint256",
+        type: "uint32",
       },
     ],
     stateMutability: "view",
@@ -92,9 +92,16 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
+        components: [
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct inEuint32",
+        name: "encryptedAmount",
+        type: "tuple",
       },
     ],
     name: "approve",
@@ -109,17 +116,11 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
+    inputs: [],
     name: "balanceOf",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "euint32",
         name: "",
         type: "uint256",
       },
@@ -132,9 +133,9 @@ const _abi = [
     name: "totalSupply",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "uint32",
         name: "",
-        type: "uint256",
+        type: "uint32",
       },
     ],
     stateMutability: "view",
@@ -144,11 +145,11 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "recipient",
+        name: "to",
         type: "address",
       },
       {
-        internalType: "uint256",
+        internalType: "euint32",
         name: "amount",
         type: "uint256",
       },
@@ -168,18 +169,25 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "sender",
+        name: "from",
         type: "address",
       },
       {
         internalType: "address",
-        name: "recipient",
+        name: "to",
         type: "address",
       },
       {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
+        components: [
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct inEuint32",
+        name: "encryptedAmount",
+        type: "tuple",
       },
     ],
     name: "transferFrom",

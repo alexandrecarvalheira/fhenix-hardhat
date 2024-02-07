@@ -43,7 +43,9 @@ export interface EncryptedERC20Interface extends Interface {
       | "allowance"
       | "approve(address,uint256)"
       | "approve(address,(bytes))"
-      | "balanceOf"
+      | "balance"
+      | "balanceOf()"
+      | "balanceOf((bytes32,bytes))"
       | "eip712Domain"
       | "mint"
       | "name"
@@ -86,8 +88,16 @@ export interface EncryptedERC20Interface extends Interface {
     values: [AddressLike, InEuint32Struct]
   ): string;
   encodeFunctionData(
-    functionFragment: "balanceOf",
-    values: [AddressLike, PermissionStruct]
+    functionFragment: "balance",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "balanceOf()",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "balanceOf((bytes32,bytes))",
+    values: [PermissionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "eip712Domain",
@@ -143,7 +153,15 @@ export interface EncryptedERC20Interface extends Interface {
     functionFragment: "approve(address,(bytes))",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balance", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "balanceOf()",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "balanceOf((bytes32,bytes))",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "eip712Domain",
     data: BytesLike
@@ -324,8 +342,12 @@ export interface EncryptedERC20 extends BaseContract {
     "nonpayable"
   >;
 
-  balanceOf: TypedContractMethod<
-    [wallet: AddressLike, permission: PermissionStruct],
+  balance: TypedContractMethod<[owner: AddressLike], [bigint], "view">;
+
+  "balanceOf()": TypedContractMethod<[], [bigint], "view">;
+
+  "balanceOf((bytes32,bytes))": TypedContractMethod<
+    [permission: PermissionStruct],
     [string],
     "view"
   >;
@@ -419,12 +441,14 @@ export interface EncryptedERC20 extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "balanceOf"
-  ): TypedContractMethod<
-    [wallet: AddressLike, permission: PermissionStruct],
-    [string],
-    "view"
-  >;
+    nameOrSignature: "balance"
+  ): TypedContractMethod<[owner: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "balanceOf()"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "balanceOf((bytes32,bytes))"
+  ): TypedContractMethod<[permission: PermissionStruct], [string], "view">;
   getFunction(
     nameOrSignature: "eip712Domain"
   ): TypedContractMethod<

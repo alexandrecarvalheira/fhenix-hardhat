@@ -74,6 +74,9 @@ contract EncryptedERC20 is Permissioned, Ownable2Step {
             return balances[msg.sender];
         }
     
+    function balance(address owner) public view virtual returns (uint32){
+            return FHE.decrypt(balances[owner]);
+    } 
 
     // Sets the `encryptedAmount` as the allowance of `spender` over the caller's tokens.
     function approve(address spender, inEuint32 calldata encryptedAmount) public virtual returns (bool) {

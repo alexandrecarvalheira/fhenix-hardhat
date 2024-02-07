@@ -28,11 +28,19 @@ export type InEuint32Struct = { data: BytesLike };
 
 export type InEuint32StructOutput = [data: string] & { data: string };
 
+export type PermissionStruct = { publicKey: BytesLike; signature: BytesLike };
+
+export type PermissionStructOutput = [publicKey: string, signature: string] & {
+  publicKey: string;
+  signature: string;
+};
+
 export interface CPAMMInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "addLiquidity"
       | "balanceOf"
+      | "balances"
       | "eip712Domain"
       | "removeLiquidity"
       | "reserve0"
@@ -52,6 +60,10 @@ export interface CPAMMInterface extends Interface {
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "balances",
+    values: [PermissionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "eip712Domain",
@@ -79,6 +91,7 @@ export interface CPAMMInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eip712Domain",
     data: BytesLike
@@ -159,6 +172,12 @@ export interface CPAMM extends BaseContract {
 
   balanceOf: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
+  balances: TypedContractMethod<
+    [permission: PermissionStruct],
+    [string],
+    "view"
+  >;
+
   eip712Domain: TypedContractMethod<
     [],
     [
@@ -211,6 +230,9 @@ export interface CPAMM extends BaseContract {
   getFunction(
     nameOrSignature: "balanceOf"
   ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "balances"
+  ): TypedContractMethod<[permission: PermissionStruct], [string], "view">;
   getFunction(
     nameOrSignature: "eip712Domain"
   ): TypedContractMethod<
