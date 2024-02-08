@@ -76,13 +76,12 @@ contract CPAMM is Permissioned {
         euint32 amount1 = FHE.asEuint32(_amount1);
 
 
-
          
-        // ebool reservesEqual = FHE.eq(FHE.mul(reserve0, amount1),FHE.mul(reserve1, amount0));
-        // FHE.req(reservesEqual);
+        ebool reservesEqual = FHE.eq(FHE.mul(reserve0, amount1),FHE.mul(reserve1, amount0));
+        FHE.req(reservesEqual);
 
         token0.transferFrom(msg.sender, address(this), _amount0);
-        token1.transferFrom(msg.sender, address(this), _amount1);
+        token1.transferFrom(msg.sender, address(this), _amount1);S
 
 
         euint32 shares = FHE.select(totalSupply.eq(FHE.asEuint32(0)),
