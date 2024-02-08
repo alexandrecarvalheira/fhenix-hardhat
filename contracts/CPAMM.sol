@@ -34,7 +34,9 @@ contract CPAMM is Permissioned {
             return FHE.sealoutput(balanceOf[msg.sender], permission.publicKey);
     }
 
-        
+     function getTotalSupply() public view virtual returns (uint32) {
+        return  FHE.decrypt(totalSupply);
+     }
 
     function _burn(address _from, euint32 _amount) private {
         balanceOf[_from] = FHE.sub(balanceOf[_from],_amount);
@@ -76,26 +78,22 @@ contract CPAMM is Permissioned {
 
 
          
-        ebool reservesEqual = FHE.eq(FHE.mul(reserve0, amount1),FHE.mul(reserve1, amount0));
-        FHE.req(reservesEqual);
+        // ebool reservesEqual = FHE.eq(FHE.mul(reserve0, amount1),FHE.mul(reserve1, amount0));
+        // FHE.req(reservesEqual);
 
         token0.transferFrom(msg.sender, address(this), _amount0);
         token1.transferFrom(msg.sender, address(this), _amount1);
 
 
-
         euint32 shares = FHE.select(totalSupply.eq(FHE.asEuint32(0)),
-        FHE.asEuint32(_sqrt(FHE.decrypt(amount0) + FHE.decrypt(amount1))),
-        _min(FHE.asEuint32(1),FHE.asEuint32(1)));
+        FHE.asEuint32(_sqrt(FHE.add(amount0, amount1))),
+        FHE.div(FHE.mul(amount0,totalSupply),reserve0));
 
-        // euint32 shares = FHE.select(totalSupply.eq(FHE.asEuint32(0)),
-        // FHE.asEuint32(_sqrt(FHE.decrypt(amount0) + FHE.decrypt(amount1))),
-        // _min((amount0.mul(totalSupply)).div(reserve0),(amount1.mul(totalSupply)).div(reserve1)));
 
-        // FHE.req(shares.gt(FHE.asEuint32(0)));
-        // _mint(msg.sender, shares);
+        FHE.req(shares.ne(FHE.asEuint32(0)));
+        _mint(msg.sender, shares);
 
-        // _update(token0.balanceOf(), token1.balanceOf());
+        _update(token0.balanceOf(), token1.balanceOf());
         return shares;
     }
 
@@ -118,7 +116,8 @@ contract CPAMM is Permissioned {
         token1.transfer(msg.sender, amount1);
     }
 
-    function _sqrt(uint32 y) private pure returns (uint32 z) {
+    function _sqrt(euint32 _y) private pure returns (uint32 z) {
+        uint32 y = FHE.decrypt(_y);
         if (y > 3) {
             z = y;
             uint32 x = y / 2 + 1;
@@ -131,7 +130,10 @@ contract CPAMM is Permissioned {
         }
     }
 
-    function _min(euint32 x,euint32 y) private pure returns (euint32) {
+    function _min(euint32 _x,euint32 _y) private view returns (euint32) {
+        euint32 x = _x.div(reserve0);
+        euint32 y = _y.div(reserve1);
+
         ebool result = x.lte(y);
         return FHE.select(result,x,y);
     }

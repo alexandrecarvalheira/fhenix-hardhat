@@ -42,6 +42,7 @@ export interface CPAMMInterface extends Interface {
       | "balanceOf"
       | "balances"
       | "eip712Domain"
+      | "getTotalSupply"
       | "removeLiquidity"
       | "reserve0"
       | "reserve1"
@@ -70,6 +71,10 @@ export interface CPAMMInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getTotalSupply",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "removeLiquidity",
     values: [InEuint32Struct]
   ): string;
@@ -94,6 +99,10 @@ export interface CPAMMInterface extends Interface {
   decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eip712Domain",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -194,6 +203,8 @@ export interface CPAMM extends BaseContract {
     "view"
   >;
 
+  getTotalSupply: TypedContractMethod<[], [bigint], "view">;
+
   removeLiquidity: TypedContractMethod<
     [_shares: InEuint32Struct],
     [[bigint, bigint] & { amount0: bigint; amount1: bigint }],
@@ -250,6 +261,9 @@ export interface CPAMM extends BaseContract {
     ],
     "view"
   >;
+  getFunction(
+    nameOrSignature: "getTotalSupply"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "removeLiquidity"
   ): TypedContractMethod<

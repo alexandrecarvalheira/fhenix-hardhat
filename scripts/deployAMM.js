@@ -21,8 +21,8 @@ async function deploy() {
   // console.log(`ERC20 deployed to: ${await encryptedERC20_2.getAddress()}`);
 
   const amm = await CPAMM.connect(contractOwner).deploy(
-    "0xbeb4eF1fcEa618C6ca38e3828B00f8D481EC2CC2",
     "0x5c93e3B7824035B375E373FaC1578D4089dcE77A",
+    "0xD30C778F7Fd47CCfB93Caa589195eb288FC768c8",
   );
   await amm.waitForDeployment();
 
