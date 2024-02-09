@@ -69,11 +69,11 @@ contract EncryptedERC20 is Permissioned, Ownable2Step {
     ) public view virtual onlySender(permission) returns (bytes memory) {
             return FHE.sealoutput(balances[msg.sender], permission.publicKey);
     }
-
+    //test function
     function balanceOf() public view virtual returns (euint8) {
             return balances[msg.sender];
         }
-    
+    // test function
     function balance(address owner) public view virtual returns (uint8){
             return FHE.decrypt(balances[owner]);
     } 

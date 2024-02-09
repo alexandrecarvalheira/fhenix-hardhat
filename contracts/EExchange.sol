@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {FHE, euint32, inEuint8} from "@fhenixprotocol/contracts/FHE.sol";
 
 
-contract CPAMM is Permissioned {
+contract EExchange is Permissioned {
     IERC20 public immutable token0;
     IERC20 public immutable token1;
 
@@ -34,6 +34,7 @@ contract CPAMM is Permissioned {
             return FHE.sealoutput(balanceOf[msg.sender], permission.publicKey);
     }
 
+//test func
      function getTotalSupply() public view virtual returns (uint8) {
         return  FHE.decrypt(totalSupply);
      }

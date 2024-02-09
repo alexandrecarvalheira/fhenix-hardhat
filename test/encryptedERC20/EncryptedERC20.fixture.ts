@@ -7,8 +7,7 @@ export async function deployEncryptedERC20Fixture(): Promise<{ contract: Encrypt
   const contractOwner = accounts[0];
 
   const contractFactory = await hre.ethers.getContractFactory("EncryptedERC20");
-  const contract = await contractFactory.connect(contractOwner).deploy("Fhenix", "FHE"); // City of Zama's battle
-  await contract.waitForDeployment();
+  const contract = await contractFactory.connect(contractOwner).deploy("Fhenix", "FHE");
   const address = await contract.getAddress();
 
   return { contract, address };
