@@ -32,9 +32,9 @@ export type PermissionStructOutput = [publicKey: string, signature: string] & {
   signature: string;
 };
 
-export type InEuint32Struct = { data: BytesLike };
+export type InEuint8Struct = { data: BytesLike };
 
-export type InEuint32StructOutput = [data: string] & { data: string };
+export type InEuint8StructOutput = [data: string] & { data: string };
 
 export interface EncryptedERC20Interface extends Interface {
   getFunction(
@@ -85,7 +85,7 @@ export interface EncryptedERC20Interface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "approve(address,(bytes))",
-    values: [AddressLike, InEuint32Struct]
+    values: [AddressLike, InEuint8Struct]
   ): string;
   encodeFunctionData(
     functionFragment: "balance",
@@ -121,7 +121,7 @@ export interface EncryptedERC20Interface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transfer(address,(bytes))",
-    values: [AddressLike, InEuint32Struct]
+    values: [AddressLike, InEuint8Struct]
   ): string;
   encodeFunctionData(
     functionFragment: "transfer(address,uint256)",
@@ -133,7 +133,7 @@ export interface EncryptedERC20Interface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferFrom(address,address,(bytes))",
-    values: [AddressLike, AddressLike, InEuint32Struct]
+    values: [AddressLike, AddressLike, InEuint8Struct]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -337,7 +337,7 @@ export interface EncryptedERC20 extends BaseContract {
   >;
 
   "approve(address,(bytes))": TypedContractMethod<
-    [spender: AddressLike, encryptedAmount: InEuint32Struct],
+    [spender: AddressLike, encryptedAmount: InEuint8Struct],
     [boolean],
     "nonpayable"
   >;
@@ -383,7 +383,7 @@ export interface EncryptedERC20 extends BaseContract {
   totalSupply: TypedContractMethod<[], [bigint], "view">;
 
   "transfer(address,(bytes))": TypedContractMethod<
-    [to: AddressLike, encryptedAmount: InEuint32Struct],
+    [to: AddressLike, encryptedAmount: InEuint8Struct],
     [boolean],
     "nonpayable"
   >;
@@ -401,7 +401,7 @@ export interface EncryptedERC20 extends BaseContract {
   >;
 
   "transferFrom(address,address,(bytes))": TypedContractMethod<
-    [from: AddressLike, to: AddressLike, encryptedAmount: InEuint32Struct],
+    [from: AddressLike, to: AddressLike, encryptedAmount: InEuint8Struct],
     [boolean],
     "nonpayable"
   >;
@@ -436,7 +436,7 @@ export interface EncryptedERC20 extends BaseContract {
   getFunction(
     nameOrSignature: "approve(address,(bytes))"
   ): TypedContractMethod<
-    [spender: AddressLike, encryptedAmount: InEuint32Struct],
+    [spender: AddressLike, encryptedAmount: InEuint8Struct],
     [boolean],
     "nonpayable"
   >;
@@ -490,7 +490,7 @@ export interface EncryptedERC20 extends BaseContract {
   getFunction(
     nameOrSignature: "transfer(address,(bytes))"
   ): TypedContractMethod<
-    [to: AddressLike, encryptedAmount: InEuint32Struct],
+    [to: AddressLike, encryptedAmount: InEuint8Struct],
     [boolean],
     "nonpayable"
   >;
@@ -511,7 +511,7 @@ export interface EncryptedERC20 extends BaseContract {
   getFunction(
     nameOrSignature: "transferFrom(address,address,(bytes))"
   ): TypedContractMethod<
-    [from: AddressLike, to: AddressLike, encryptedAmount: InEuint32Struct],
+    [from: AddressLike, to: AddressLike, encryptedAmount: InEuint8Struct],
     [boolean],
     "nonpayable"
   >;
@@ -585,7 +585,7 @@ export interface EncryptedERC20 extends BaseContract {
       EIP712DomainChangedEvent.OutputObject
     >;
 
-    "Mint(address,uint32)": TypedContractEvent<
+    "Mint(address,uint8)": TypedContractEvent<
       MintEvent.InputTuple,
       MintEvent.OutputTuple,
       MintEvent.OutputObject

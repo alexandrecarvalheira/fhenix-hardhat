@@ -25,9 +25,9 @@ import type {
   Listener,
 } from "ethers";
 
-export type InEuint32Struct = { data: BytesLike };
+export type InEuint8Struct = { data: BytesLike };
 
-export type InEuint32StructOutput = [data: string] & { data: string };
+export type InEuint8StructOutput = [data: string] & { data: string };
 
 export interface IERC20Interface extends Interface {
   getFunction(
@@ -48,7 +48,7 @@ export interface IERC20Interface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "approve",
-    values: [AddressLike, InEuint32Struct]
+    values: [AddressLike, InEuint8Struct]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values?: undefined): string;
   encodeFunctionData(
@@ -61,7 +61,7 @@ export interface IERC20Interface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
-    values: [AddressLike, AddressLike, InEuint32Struct]
+    values: [AddressLike, AddressLike, InEuint8Struct]
   ): string;
 
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
@@ -164,7 +164,7 @@ export interface IERC20 extends BaseContract {
   >;
 
   approve: TypedContractMethod<
-    [spender: AddressLike, encryptedAmount: InEuint32Struct],
+    [spender: AddressLike, encryptedAmount: InEuint8Struct],
     [boolean],
     "nonpayable"
   >;
@@ -180,7 +180,7 @@ export interface IERC20 extends BaseContract {
   >;
 
   transferFrom: TypedContractMethod<
-    [from: AddressLike, to: AddressLike, encryptedAmount: InEuint32Struct],
+    [from: AddressLike, to: AddressLike, encryptedAmount: InEuint8Struct],
     [boolean],
     "nonpayable"
   >;
@@ -199,7 +199,7 @@ export interface IERC20 extends BaseContract {
   getFunction(
     nameOrSignature: "approve"
   ): TypedContractMethod<
-    [spender: AddressLike, encryptedAmount: InEuint32Struct],
+    [spender: AddressLike, encryptedAmount: InEuint8Struct],
     [boolean],
     "nonpayable"
   >;
@@ -219,7 +219,7 @@ export interface IERC20 extends BaseContract {
   getFunction(
     nameOrSignature: "transferFrom"
   ): TypedContractMethod<
-    [from: AddressLike, to: AddressLike, encryptedAmount: InEuint32Struct],
+    [from: AddressLike, to: AddressLike, encryptedAmount: InEuint8Struct],
     [boolean],
     "nonpayable"
   >;
@@ -240,7 +240,7 @@ export interface IERC20 extends BaseContract {
   >;
 
   filters: {
-    "Approval(address,address,uint32)": TypedContractEvent<
+    "Approval(address,address,uint8)": TypedContractEvent<
       ApprovalEvent.InputTuple,
       ApprovalEvent.OutputTuple,
       ApprovalEvent.OutputObject
@@ -251,7 +251,7 @@ export interface IERC20 extends BaseContract {
       ApprovalEvent.OutputObject
     >;
 
-    "Transfer(address,address,uint32)": TypedContractEvent<
+    "Transfer(address,address,uint8)": TypedContractEvent<
       TransferEvent.InputTuple,
       TransferEvent.OutputTuple,
       TransferEvent.OutputObject

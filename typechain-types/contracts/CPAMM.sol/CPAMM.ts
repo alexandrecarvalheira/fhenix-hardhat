@@ -24,9 +24,9 @@ import type {
   Listener,
 } from "ethers";
 
-export type InEuint32Struct = { data: BytesLike };
+export type InEuint8Struct = { data: BytesLike };
 
-export type InEuint32StructOutput = [data: string] & { data: string };
+export type InEuint8StructOutput = [data: string] & { data: string };
 
 export type PermissionStruct = { publicKey: BytesLike; signature: BytesLike };
 
@@ -56,7 +56,7 @@ export interface CPAMMInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "addLiquidity",
-    values: [InEuint32Struct, InEuint32Struct]
+    values: [InEuint8Struct, InEuint8Struct]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
@@ -76,13 +76,13 @@ export interface CPAMMInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "removeLiquidity",
-    values: [InEuint32Struct]
+    values: [InEuint8Struct]
   ): string;
   encodeFunctionData(functionFragment: "reserve0", values?: undefined): string;
   encodeFunctionData(functionFragment: "reserve1", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "swap",
-    values: [AddressLike, InEuint32Struct]
+    values: [AddressLike, InEuint8Struct]
   ): string;
   encodeFunctionData(functionFragment: "token0", values?: undefined): string;
   encodeFunctionData(functionFragment: "token1", values?: undefined): string;
@@ -174,7 +174,7 @@ export interface CPAMM extends BaseContract {
   ): Promise<this>;
 
   addLiquidity: TypedContractMethod<
-    [_amount0: InEuint32Struct, _amount1: InEuint32Struct],
+    [_amount0: InEuint8Struct, _amount1: InEuint8Struct],
     [bigint],
     "nonpayable"
   >;
@@ -206,7 +206,7 @@ export interface CPAMM extends BaseContract {
   getTotalSupply: TypedContractMethod<[], [bigint], "view">;
 
   removeLiquidity: TypedContractMethod<
-    [_shares: InEuint32Struct],
+    [_shares: InEuint8Struct],
     [[bigint, bigint] & { amount0: bigint; amount1: bigint }],
     "nonpayable"
   >;
@@ -216,7 +216,7 @@ export interface CPAMM extends BaseContract {
   reserve1: TypedContractMethod<[], [bigint], "view">;
 
   swap: TypedContractMethod<
-    [_tokenIn: AddressLike, _amountIn: InEuint32Struct],
+    [_tokenIn: AddressLike, _amountIn: InEuint8Struct],
     [bigint],
     "nonpayable"
   >;
@@ -234,7 +234,7 @@ export interface CPAMM extends BaseContract {
   getFunction(
     nameOrSignature: "addLiquidity"
   ): TypedContractMethod<
-    [_amount0: InEuint32Struct, _amount1: InEuint32Struct],
+    [_amount0: InEuint8Struct, _amount1: InEuint8Struct],
     [bigint],
     "nonpayable"
   >;
@@ -267,7 +267,7 @@ export interface CPAMM extends BaseContract {
   getFunction(
     nameOrSignature: "removeLiquidity"
   ): TypedContractMethod<
-    [_shares: InEuint32Struct],
+    [_shares: InEuint8Struct],
     [[bigint, bigint] & { amount0: bigint; amount1: bigint }],
     "nonpayable"
   >;
@@ -280,7 +280,7 @@ export interface CPAMM extends BaseContract {
   getFunction(
     nameOrSignature: "swap"
   ): TypedContractMethod<
-    [_tokenIn: AddressLike, _amountIn: InEuint32Struct],
+    [_tokenIn: AddressLike, _amountIn: InEuint8Struct],
     [bigint],
     "nonpayable"
   >;

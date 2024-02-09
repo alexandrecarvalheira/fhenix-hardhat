@@ -9,22 +9,22 @@ import "@openzeppelin/contracts/access/Ownable2Step.sol";
 contract EncryptedERC20 is Permissioned, Ownable2Step {
     event Transfer(address indexed from, address indexed to);
     event Approval(address indexed owner, address indexed spender);
-    event Mint(address indexed to, uint32 amount);
+    event Mint(address indexed to, uint8 amount);
 
-    uint32 private _totalSupply;
+    uint8 private _totalSupply;
     string private _name;
     string private _symbol;
 
     // A mapping from address to an encrypted balance.
-    mapping(address => euint32) internal balances;
+    mapping(address => euint8) internal balances;
 
     // A mapping of the form mapping(owner => mapping(spender => allowance)).
-    mapping(address => mapping(address => euint32)) internal allowances;
+    mapping(address => mapping(address => euint8)) internal allowances;
 
     constructor(string memory name_, string memory symbol_) Ownable(msg.sender) {
         _name = name_;
         _symbol = symbol_;
-        mint(1000000);
+        mint(100);
     }
 
     // Returns the name of the token.
@@ -38,25 +38,25 @@ contract EncryptedERC20 is Permissioned, Ownable2Step {
     }
 
     // Returns the total supply of the token
-    function totalSupply() public view virtual returns (uint32) {
+    function totalSupply() public view virtual returns (uint8) {
         return _totalSupply;
     }
 
     // Sets the balance of the owner to the given encrypted balance.
-    function mint(uint32 mintedAmount) public virtual  {
-        balances[msg.sender] = FHE.add(balances[msg.sender], FHE.asEuint32(mintedAmount)); // overflow impossible because of next line
+    function mint(uint8 mintedAmount) public virtual  {
+        balances[msg.sender] = FHE.add(balances[msg.sender], FHE.asEuint8(mintedAmount)); // overflow impossible because of next line
         _totalSupply = _totalSupply + mintedAmount;
         emit Mint(msg.sender, mintedAmount);
     }
 
     // Transfers an encrypted amount from the message sender address to the `to` address.
-    function transfer(address to, inEuint32 calldata encryptedAmount) public virtual returns (bool) {
-        transfer(to, FHE.asEuint32(encryptedAmount));
+    function transfer(address to, inEuint8 calldata encryptedAmount) public virtual returns (bool) {
+        transfer(to, FHE.asEuint8(encryptedAmount));
         return true;
     }
 
     // Transfers an amount from the message sender address to the `to` address.
-    function transfer(address to, euint32 amount) public virtual returns (bool) {
+    function transfer(address to, euint8 amount) public virtual returns (bool) {
         // makes sure the owner has enough tokens
         ebool canTransfer = FHE.lte(amount, balances[msg.sender]);
         _transfer(msg.sender, to, amount, canTransfer);
@@ -70,22 +70,22 @@ contract EncryptedERC20 is Permissioned, Ownable2Step {
             return FHE.sealoutput(balances[msg.sender], permission.publicKey);
     }
 
-    function balanceOf() public view virtual returns (euint32) {
+    function balanceOf() public view virtual returns (euint8) {
             return balances[msg.sender];
         }
     
-    function balance(address owner) public view virtual returns (uint32){
+    function balance(address owner) public view virtual returns (uint8){
             return FHE.decrypt(balances[owner]);
     } 
 
     // Sets the `encryptedAmount` as the allowance of `spender` over the caller's tokens.
-    function approve(address spender, inEuint32 calldata encryptedAmount) public virtual returns (bool) {
-        approve(spender, FHE.asEuint32(encryptedAmount));
+    function approve(address spender, inEuint8 calldata encryptedAmount) public virtual returns (bool) {
+        approve(spender, FHE.asEuint8(encryptedAmount));
         return true;
     }
 
     // Sets the `amount` as the allowance of `spender` over the caller's tokens.
-    function approve(address spender, euint32 amount) public virtual returns (bool) {
+    function approve(address spender, euint8 amount) public virtual returns (bool) {
         address owner = msg.sender;
         _approve(owner, spender, amount);
         emit Approval(owner, spender);
@@ -104,33 +104,33 @@ contract EncryptedERC20 is Permissioned, Ownable2Step {
     }
 
     // Transfers `encryptedAmount` tokens using the caller's allowance.
-    function transferFrom(address from, address to, inEuint32 calldata encryptedAmount) public virtual returns (bool) {
-        transferFrom(from, to, FHE.asEuint32(encryptedAmount));
+    function transferFrom(address from, address to, inEuint8 calldata encryptedAmount) public virtual returns (bool) {
+        transferFrom(from, to, FHE.asEuint8(encryptedAmount));
         return true;
     }
 
     // Transfers `amount` tokens using the caller's allowance.
-    function transferFrom(address from, address to, euint32 amount) public virtual returns (bool) {
+    function transferFrom(address from, address to, euint8 amount) public virtual returns (bool) {
         address spender = msg.sender;
         ebool isTransferable = _updateAllowance(from, spender, amount);
         _transfer(from, to, amount, isTransferable);
         return true;
     }
 
-    function _approve(address owner, address spender, euint32 amount) internal virtual {
+    function _approve(address owner, address spender, euint8 amount) internal virtual {
         allowances[owner][spender] = amount;
     }
 
-    function _allowance(address owner, address spender) internal view virtual returns (euint32) {
+    function _allowance(address owner, address spender) internal view virtual returns (euint8) {
         if (FHE.isInitialized(allowances[owner][spender])) {
             return allowances[owner][spender];
         } else {
-            return FHE.asEuint32(0);
+            return FHE.asEuint8(0);
         }
     }
 
-    function _updateAllowance(address owner, address spender, euint32 amount) internal virtual returns (ebool) {
-        euint32 currentAllowance = _allowance(owner, spender);
+    function _updateAllowance(address owner, address spender, euint8 amount) internal virtual returns (ebool) {
+        euint8 currentAllowance = _allowance(owner, spender);
         // makes sure the allowance suffices
         ebool allowedTransfer = FHE.lte(amount, currentAllowance);
         // makes sure the owner has enough tokens
@@ -141,10 +141,10 @@ contract EncryptedERC20 is Permissioned, Ownable2Step {
     }
 
     // Transfers an encrypted amount.
-    function _transfer(address from, address to, euint32 amount, ebool isTransferable) internal virtual {
+    function _transfer(address from, address to, euint8 amount, ebool isTransferable) internal virtual {
         // Add to the balance of `to` and subract from the balance of `from`.
-        balances[to] = balances[to] + FHE.select(isTransferable, amount, FHE.asEuint32(0));
-        balances[from] = balances[from] - FHE.select(isTransferable, amount, FHE.asEuint32(0));
+        balances[to] = balances[to] + FHE.select(isTransferable, amount, FHE.asEuint8(0));
+        balances[from] = balances[from] - FHE.select(isTransferable, amount, FHE.asEuint8(0));
         emit Transfer(from, to);
     }
 }

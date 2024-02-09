@@ -27,9 +27,9 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint32",
+        internalType: "uint8",
         name: "amount",
-        type: "uint32",
+        type: "uint8",
       },
     ],
     name: "Approval",
@@ -52,9 +52,9 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint32",
+        internalType: "uint8",
         name: "amount",
-        type: "uint32",
+        type: "uint8",
       },
     ],
     name: "Transfer",
@@ -76,9 +76,9 @@ const _abi = [
     name: "allowance",
     outputs: [
       {
-        internalType: "uint32",
+        internalType: "uint8",
         name: "",
-        type: "uint32",
+        type: "uint8",
       },
     ],
     stateMutability: "view",
@@ -99,7 +99,7 @@ const _abi = [
             type: "bytes",
           },
         ],
-        internalType: "struct inEuint32",
+        internalType: "struct inEuint8",
         name: "encryptedAmount",
         type: "tuple",
       },
@@ -120,7 +120,7 @@ const _abi = [
     name: "balanceOf",
     outputs: [
       {
-        internalType: "euint32",
+        internalType: "euint8",
         name: "",
         type: "uint256",
       },
@@ -133,9 +133,9 @@ const _abi = [
     name: "totalSupply",
     outputs: [
       {
-        internalType: "uint32",
+        internalType: "uint8",
         name: "",
-        type: "uint32",
+        type: "uint8",
       },
     ],
     stateMutability: "view",
@@ -149,7 +149,7 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "euint32",
+        internalType: "euint8",
         name: "amount",
         type: "uint256",
       },
@@ -185,7 +185,7 @@ const _abi = [
             type: "bytes",
           },
         ],
-        internalType: "struct inEuint32",
+        internalType: "struct inEuint8",
         name: "encryptedAmount",
         type: "tuple",
       },

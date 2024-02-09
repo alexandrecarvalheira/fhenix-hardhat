@@ -9,9 +9,9 @@ async function getCounter() {
   // ERC20 deployed to: 0xBf2CA6026553Cd08daB954B7fc51eD75dAd5e354
   // AMM deployed to: 0xEc3546f68593dddD6Fca089c903c5D60Ebd560B0
 
-  const contractAddress = "0xD31ae0a20a83A67AB197b35B6c18dCaa8deEBd5c";
-  const token1Address = "0x5c93e3B7824035B375E373FaC1578D4089dcE77A";
-  const token2Address = "0xD30C778F7Fd47CCfB93Caa589195eb288FC768c8";
+  const contractAddress = "0x5B035788372AbE22719C81161eD7523C55B19F5f";
+  const token1Address = "0xbeb4eF1fcEa618C6ca38e3828B00f8D481EC2CC2";
+  const token2Address = "0x5c93e3B7824035B375E373FaC1578D4089dcE77A";
   const provider = hre.ethers.provider;
   const instance = new FhenixClient({ provider });
 
@@ -22,66 +22,73 @@ async function getCounter() {
 
   const AMM = await hre.ethers.getContractAt("CPAMM", contractAddress);
 
-  const amount = await instance.encrypt_uint32(10000);
-  // console.log(contractOwner.address, permission);
+  const amount1 = await instance.encrypt_uint8(10);
+  const amount2 = await instance.encrypt_uint8(16);
   const token1 = await hre.ethers.getContractAt("EncryptedERC20", token1Address);
   const token2 = await hre.ethers.getContractAt("EncryptedERC20", token2Address);
 
-  // const tx1 = await token1.balance(contractAddress);
+  console.log("LP total supply:", await AMM.getTotalSupply());
+
+  // console.log("Approving...");
+  // const tx1 = await token1["approve(address,(bytes))"](contractAddress, amount1);
   // await tx1.wait();
 
-  // const Ebalance = await token2["balanceOf((bytes32,bytes))"](permission);
-  // const balance = instance.unseal(token2Address, Ebalance);
-  // console.log(balance);
-  console.log("total supply:", await AMM.getTotalSupply());
+  // const tx2 = await token2["approve(address,(bytes))"](contractAddress, amount2);
+  // await tx2.wait();
 
-  const tx1 = await token1["approve(address,(bytes))"](contractAddress, amount);
-  await tx1.wait();
+  // console.log("Adding Liquidity...");
+  // const tx3 = await AMM.addLiquidity(amount1, amount2);
+  // await tx3.wait();
 
-  const tx2 = await token2["approve(address,(bytes))"](contractAddress, amount);
-  await tx2.wait();
+  // console.log("Token 1 AMM Balance:", await token1.balance(contractAddress));
+  // console.log("Token 1 EOA Balance:", await token1.balance(contractOwner.address));
 
-  // const Ebalance = await token2.allowance(contractOwner, contractAddress, permission);
-  // // console.log(await token2.balance(contractOwner));
-  // // const Ebalance = await AMM.balances(permission);
-  // const balance = instance.unseal(token2Address, Ebalance);
-  // console.log(balance);
-
-  // await token2["approve(address,(bytes))"](contractAddress, amount);
-  // const Ebalance = await token2["balanceOf((bytes32,bytes))"](permission);
-  // const balance = instance.unseal(token2Address, Ebalance);
-  // console.log(balance);
-
-  const tx3 = await AMM.addLiquidity(amount, amount);
-  await tx3.wait();
-
-  console.log("Token 1 AMM Balance:", await token1.balance(contractAddress));
-  console.log("Token 2 AMM Balance:", await token2.balance(contractAddress));
+  // console.log("Token 2 AMM Balance:", await token2.balance(contractAddress));
+  // console.log("Token 2 EOA Balance:", await token2.balance(contractOwner.address));
 
   const Ebalance = await AMM.balances(permission);
   const balance = instance.unseal(contractAddress, Ebalance);
-  console.log("user LP balance:", balance);
+  // console.log("user LP balance:", balance);
+
+  // const swapamount = await instance.encrypt_uint8(3);
+  // const tx5 = await token1["approve(address,(bytes))"](contractAddress, swapamount);
+  // await tx5.wait();
+
+  // const tx4 = await AMM.swap(token1Address, swapamount);
+  // await tx4.wait();
+
+  // console.log("Token 1 AMM Balance:", await token1.balance(contractAddress));
+  // console.log("Token 1 EOA Balance:", await token1.balance(contractOwner.address));
+
+  // console.log("Token 2 AMM Balance:", await token2.balance(contractAddress));
+  // console.log("Token 2 EOA Balance:", await token2.balance(contractOwner.address));
+
+  // const Ebalance2 = await AMM.balances(permission);
+  // const balance2 = instance.unseal(contractAddress, Ebalance2);
+  // console.log("user LP balance:", balance2);
+
+  // console.log("total supply:", await AMM.getTotalSupply());
+
+  // REMOVE LIQUIDITY TESTS
 
   console.log("total supply:", await AMM.getTotalSupply());
 
-  // console.log(await AMM.addLiquidity(amount, amount));
+  console.log("Removing Liquidity...");
 
-  // const Ebalance = await AMM.balances(permission);
-  // const balance = instance.unseal(contractAddress, Ebalance);
-  // console.log(balance);
-  // console.log(await token1.balanceOf());
-  // console.log(await token2.balanceOf());
-  // const Ebalance = await token1.allowance(contractOwner.address, contractAddress, permission);
-  // const balance = instance.unseal("0x2468bbf5023Dd6ceB0A877317B39001B3B290A86", Ebalance);
-  // console.log(balance);
-  // const response = await AMM.addLiquidity(amount, amount);
-  // console.log(response);
-  // const response = await AMM.balanceOf(contractOwner.address);
-  // console.log(response);
+  const tx4 = await AMM.removeLiquidity(await instance.encrypt_uint8(Number(balance) / 2));
+  await tx4.wait();
 
-  //   const response = await Counter.connect(contractOwner).getCounter(permission);
-  //   const plaintext = await instance.unseal(contractAddress, response);
-  //   console.log({ plaintext });
+  console.log("Token 1 AMM Balance:", await token1.balance(contractAddress));
+  console.log("Token 1 EOA Balance:", await token1.balance(contractOwner.address));
+
+  console.log("Token 2 AMM Balance:", await token2.balance(contractAddress));
+  console.log("Token 2 EOA Balance:", await token2.balance(contractOwner.address));
+
+  const Ebalance2 = await AMM.balances(permission);
+  const balance2 = instance.unseal(contractAddress, Ebalance2);
+  console.log("user LP balance:", balance2);
+
+  console.log("total supply:", await AMM.getTotalSupply());
 }
 
 if (require.main === module) {
