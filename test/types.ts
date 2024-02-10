@@ -1,6 +1,6 @@
 import type { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/dist/src/signer-with-address";
 
-import type { Counter, EExchange, EncryptedERC20 } from "../typechain-types";
+import type { Counter, EExchange, EncryptedERC20 } from "../types";
 import type { FheInstance } from "../utils/instance";
 
 type Fixture<T> = () => Promise<T>;
@@ -13,6 +13,14 @@ declare module "mocha" {
     signers: Signers;
     erc: EncryptedERC20;
     exchange: EExchange;
+    erc20token1: {
+      contract?: EncryptedERC20;
+      address?: string;
+    };
+    erc20token2: {
+      contract?: EncryptedERC20;
+      address?: string;
+    };
   }
 }
 
