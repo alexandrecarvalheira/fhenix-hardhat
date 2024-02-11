@@ -94,4 +94,34 @@ describe("EExchange", function () {
     const totalSupply = await this.exchange.getTotalSupply();
     expect(Number(totalSupply)).to.equal(3);
   });
+
+  it("should swap", async function () {
+    const amount1 = await this.instances.instance.encrypt_uint8(10);
+    const amount2 = await this.instances.instance.encrypt_uint8(16);
+
+    const approveToken1Tx = await this.erc20token1.contract!["approve(address,(bytes))"](this.contractAddress, amount1);
+    await approveToken1Tx.wait();
+
+    const approveToken2Tx = await this.erc20token2.contract!["approve(address,(bytes))"](this.contractAddress, amount2);
+    await approveToken2Tx.wait();
+
+    const addLiquidityTx = await this.exchange.addLiquidity(amount1, amount2);
+    await addLiquidityTx.wait();
+
+    const swapamount = await this.instances.instance.encrypt_uint8(3);
+    const approveSwap = await this.erc20token1.contract!["approve(address,(bytes))"](this.contractAddress, swapamount);
+    await approveSwap.wait();
+
+    const swapTx = await this.exchange.swap(this.erc20token1.address!, swapamount);
+    await swapTx.wait();
+
+    const userBalance1 = await this.erc20token1.contract!.balance(this.signers.alice.address);
+    const userBalance2 = await this.erc20token2.contract!.balance(this.signers.alice.address);
+    expect(Number(userBalance1)).to.equal(90 - 3);
+    expect(Number(userBalance2)).to.equal(84 + 1);
+
+    const Ebalance = await this.exchange.balances(this.instances.permission);
+    const balance = this.instances.instance.unseal(this.contractAddress, Ebalance);
+    expect(Number(balance)).to.equal(5);
+  });
 });
