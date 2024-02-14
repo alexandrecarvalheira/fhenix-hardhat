@@ -4,9 +4,7 @@ const axios = require("axios");
 const keys = process.env.WALLET;
 
 async function mnemonicToAddress() {
-  let words = process.env.MNEMONIC;
-
-  const mnemonic = ethers.Mnemonic.fromPhrase(words);
+  const mnemonic = ethers.Mnemonic.fromPhrase(keys);
   if (!mnemonic) {
     throw new Error("No MNEMONIC in .env file");
   }
