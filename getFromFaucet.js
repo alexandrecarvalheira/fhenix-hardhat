@@ -4,14 +4,14 @@ const axios = require("axios");
 const keys = process.env.WALLET;
 
 async function mnemonicToAddress() {
-  const mnemonic = ethers.Mnemonic.fromPhrase(keys);
-  if (!mnemonic) {
-    throw new Error("No MNEMONIC in .env file");
+  if (!keys) {
+    throw new Error("No keys in .env file");
   }
-  const wallet = ethers.HDNodeWallet.fromMnemonic(mnemonic, `m/44'/60'/0'/0/0`);
+  const wallet = new ethers.Wallet(keys);
 
   console.log("Ethereum address: " + wallet.address);
-  return wallet.address;
+
+  return "0xd7702EB6Ca4C101C918f7d4eaBeDc36e36260482";
 }
 
 async function callFaucet(address) {
